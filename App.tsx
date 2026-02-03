@@ -10,7 +10,7 @@ import {
   Instagram,
   Download
 } from 'lucide-react';
-import logo from './assets/nature-matters-logo.png';
+import logo from './assets/nature-matters-logo.PNG';
 import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
