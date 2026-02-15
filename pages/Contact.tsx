@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, Mountain } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Send, Mountain, Globe } from 'lucide-react';
 import { COMPANY_INFO, SOCIAL_LINKS, getContent } from '../constants';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Contact: React.FC = () => {
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const fullContent = getContent(language);
   const content = fullContent.ui;
   const departureDates = fullContent.departureDates;
@@ -66,11 +66,25 @@ ${message}`;
           alt="Skardu Valley" 
           className="absolute inset-0 w-full h-full object-cover opacity-50"
         />
-        <div className="relative z-10 text-center text-white px-4 pt-32 md:pt-0">
-          <h1 className="text-4xl md:text-5xl font-bold font-serif mb-4 drop-shadow-lg">{content.contact}</h1>
+        <div className="relative z-10 text-center text-white px-4 flex flex-col items-center pt-32 md:pt-0">
+          <div className="flex gap-4 mb-8">
+            <button 
+              onClick={() => setLanguage('en')}
+              className={`px-4 py-2 rounded-full border border-white transition flex items-center gap-2 text-sm font-semibold tracking-wide ${language === 'en' ? 'bg-white text-gray-900' : 'bg-transparent text-white hover:bg-white/10'}`}
+            >
+              <Globe size={16} /> English
+            </button>
+            <button 
+              onClick={() => setLanguage('zh')}
+              className={`px-4 py-2 rounded-full border border-white transition flex items-center gap-2 text-sm font-semibold tracking-wide ${language === 'zh' ? 'bg-white text-gray-900' : 'bg-transparent text-white hover:bg-white/10'}`}
+            >
+              <Globe size={16} /> 中文
+            </button>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold font-serif text-white mb-4 drop-shadow-lg">{content.contact}</h1>
           <div className="w-20 h-1 bg-brand-red mx-auto mb-4"></div>
-          <p className="text-lg md:text-xl font-light tracking-wide max-w-2xl mx-auto font-sans">
-            {language === 'en' ? "We'd love to hear from you. Start your journey with us today." : "我们期待听到您的声音。今天就开始您的旅程。"}
+          <p className="text-base md:text-lg font-light tracking-wide max-w-2xl mx-auto font-sans text-white/95">
+            {content.contactHeroSubtitle}
           </p>
         </div>
       </header>
@@ -89,25 +103,25 @@ ${message}`;
                   <div className="w-10 h-10 bg-brand-blue text-white rounded-full flex items-center justify-center mb-4 group-hover:bg-brand-red transition">
                     <Mail size={20} />
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-1 font-serif">{content.emailUs}</h3>
-                  <p className="text-sm text-gray-600 break-words font-sans">{SOCIAL_LINKS.email}</p>
+                  <h3 className="text-base font-bold text-gray-900 mb-1 font-serif">{content.emailUs}</h3>
+                  <p className="text-body-sm text-gray-600 break-words font-sans">{SOCIAL_LINKS.email}</p>
                 </a>
 
                 <a href={SOCIAL_LINKS.whatsapp} target="_blank" rel="noopener noreferrer" className="bg-green-50 p-6 rounded-xl border border-green-100 hover:shadow-md transition group">
                   <div className="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center mb-4 group-hover:bg-green-700 transition">
                     <Phone size={20} />
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-1 font-serif">WhatsApp</h3>
-                  <p className="text-sm text-gray-600 font-sans">{language === 'en' ? "Chat with our team" : "与我们团队聊天"}</p>
+                  <h3 className="text-base font-bold text-gray-900 mb-1 font-serif">WhatsApp</h3>
+                  <p className="text-body-sm text-gray-600 font-sans">{content.whatsappChatLabel}</p>
                 </a>
 
                 <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 hover:shadow-md transition group sm:col-span-2">
                   <div className="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center mb-4">
                     <MapPin size={20} />
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-1 font-serif">{content.ourLocation}</h3>
-                  <p className="text-sm text-gray-600 mb-2 font-sans">{COMPANY_INFO.address}</p>
-                  <p className="text-xs text-gray-500 font-mono font-sans">
+                  <h3 className="text-base font-bold text-gray-900 mb-1 font-serif">{content.ourLocation}</h3>
+                  <p className="text-body-sm text-gray-600 mb-2 font-sans">{COMPANY_INFO.address}</p>
+                  <p className="text-caption text-gray-500 font-mono font-sans">
                     {COMPANY_INFO.license} | {COMPANY_INFO.registration}
                   </p>
                 </div>
@@ -115,13 +129,13 @@ ${message}`;
 
               {/* Contact Form (Visual) */}
               <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2 font-serif">
+                <h3 className="text-heading-card font-bold text-gray-900 mb-6 flex items-center gap-2 font-serif">
                   {content.sendMessage} <Send className="text-brand-red" size={20} />
                 </h3>
                 <form className="space-y-4" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase mb-1 font-sans">{content.name}</label>
+                      <label className="block text-caption font-bold text-gray-700 uppercase mb-1 font-sans">{content.name}</label>
                       <input 
                         type="text" 
                         name="name"
@@ -133,7 +147,7 @@ ${message}`;
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase mb-1 font-sans">{content.phone}</label>
+                      <label className="block text-caption font-bold text-gray-700 uppercase mb-1 font-sans">{content.phone}</label>
                       <input 
                         type="tel" 
                         name="phone"
@@ -147,8 +161,8 @@ ${message}`;
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase mb-1 font-sans">
-                        {language === 'zh' ? '出行日期' : 'Preferred Trip Date'}
+                      <label className="block text-caption font-bold text-gray-700 uppercase mb-1 font-sans">
+                        {content.preferredTripDateLabel}
                       </label>
                       <select
                         name="season"
@@ -158,7 +172,7 @@ ${message}`;
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-lightBlue bg-gray-50 font-sans"
                       >
                         <option value="">
-                          {language === 'zh' ? '请选择日期' : 'Select trip date'}
+                          {content.selectDatePlaceholder}
                         </option>
                         {departureDates.map((date) => (
                           <option key={date} value={date}>
@@ -168,8 +182,8 @@ ${message}`;
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 uppercase mb-1 font-sans">
-                        {language === 'zh' ? '总人数' : 'Total People'}
+                      <label className="block text-caption font-bold text-gray-700 uppercase mb-1 font-sans">
+                        {content.totalPeopleLabel}
                       </label>
                       <input
                         type="number"
@@ -179,12 +193,12 @@ ${message}`;
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-lightBlue bg-gray-50 font-sans"
-                        placeholder={language === 'zh' ? '例如：4' : 'e.g. 4'}
+                        placeholder={content.peoplePlaceholder}
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 font-sans">{content.email}</label>
+                    <label className="block text-caption font-bold text-gray-700 uppercase mb-1 font-sans">{content.email}</label>
                     <input 
                       type="email" 
                       name="email"
@@ -196,7 +210,7 @@ ${message}`;
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1 font-sans">{content.message}</label>
+                    <label className="block text-caption font-bold text-gray-700 uppercase mb-1 font-sans">{content.message}</label>
                     <textarea 
                       rows={4} 
                       name="message"
@@ -207,7 +221,7 @@ ${message}`;
                       placeholder="..."
                     ></textarea>
                   </div>
-                  <button type="submit" className="w-full bg-brand-blue text-white font-bold py-4 rounded-lg hover:bg-blue-900 transition shadow-md font-sans">
+                  <button type="submit" className="w-full bg-brand-blue text-white text-base font-bold py-4 rounded-lg hover:bg-blue-900 transition shadow-md font-sans">
                     {content.sendBtn}
                   </button>
                 </form>
@@ -228,7 +242,7 @@ ${message}`;
                  className="absolute inset-0 w-full h-full"
                  title="Map Location"
                ></iframe>
-               <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur px-4 py-2 rounded-lg shadow-lg text-sm font-semibold text-gray-800 pointer-events-none">
+               <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur px-4 py-2 rounded-lg shadow-lg text-body-sm font-semibold text-gray-900 pointer-events-none">
                   <div className="flex items-center gap-2 font-sans">
                      <MapPin className="text-brand-red" size={16} />
                      Kajang, Selangor

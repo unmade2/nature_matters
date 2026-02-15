@@ -39,12 +39,12 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, subtitle }) 
     <section className="py-16 bg-white border-t border-gray-100">
       <div className="max-w-6xl mx-auto px-4 relative group">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold uppercase tracking-wide flex justify-center items-center gap-2 font-serif">
-            <span className="w-8 h-px bg-black"></span>
+          <h2 className="text-2xl font-bold uppercase tracking-wide text-gray-900 flex justify-center items-center gap-2 font-serif">
+            <span className="w-8 h-px bg-gray-900"></span>
             {title}
-            <span className="w-8 h-px bg-black"></span>
+            <span className="w-8 h-px bg-gray-900"></span>
           </h2>
-          {subtitle && <p className="text-brand-blue mt-2 font-medium font-sans">{subtitle}</p>}
+          {subtitle && <p className="text-body-sm text-gray-600 mt-2 font-sans">{subtitle}</p>}
         </div>
 
         <div className="max-w-4xl mx-auto relative group">

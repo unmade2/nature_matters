@@ -39,6 +39,13 @@ import andrewChinImg from './assets/andrew-chin.jpg';
 import pooiChengMakImg from './assets/pooi-cheng-mak.jpg';
 import tengHoiYenImg from './assets/teng-hoi-yen.jpg';
 import owenWooImg from './assets/owen-woo.jpg';
+import mrMalaysia1 from './assets/mr_malaysia_1.jpeg';
+import mrMalaysia2 from './assets/mr_malaysia_2.jpeg';
+import mrMalaysia3 from './assets/mr_malaysia_3.jpeg';
+import mrMalaysia4 from './assets/mr_malaysia_4.jpeg';
+import chinaPress1 from './assets/china_press_1.png';
+import chinaPress2 from './assets/china_press_2.jpg';
+import chinaPress3 from './assets/china_press_3.webp';
 
 export const SOCIAL_LINKS: SocialLinks = {
   facebook: "https://www.facebook.com/share/1acz4x1noi/?mibextid=wwXIfr",
@@ -149,6 +156,12 @@ interface Content {
     readMore: string;
     emailUs: string;
     ourLocation: string;
+    contactHeroSubtitle: string;
+    whatsappChatLabel: string;
+    preferredTripDateLabel: string;
+    selectDatePlaceholder: string;
+    totalPeopleLabel: string;
+    peoplePlaceholder: string;
     sendMessage: string;
     name: string;
     phone: string;
@@ -156,8 +169,6 @@ interface Content {
     message: string;
     sendBtn: string;
     whatappUs: string;
-    tripAssistant: string;
-    tripAssistantIntro: string;
     askAbout: string;
     somethingWrong: string;
     recommends: string;
@@ -183,6 +194,8 @@ interface Content {
     whyUsList: string[];
     visionTitle: string;
     visionText: string;
+    achievementsTitle: string;
+    achievements: { title: string; text: string; images: string[] }[];
     ctaTitle: string;
     gallery: string;
   };
@@ -205,19 +218,19 @@ interface Content {
 const CONTENT_EN: Content = {
   tripDetails: {
     title: "Pakistan Discovery Tour",
-    subtitle: "12 DAYS TRIP TO NORTHERN PAKISTAN",
+    subtitle: "12 DAYS ADVENTURE TRIP FROM MALAYSIA TO NORTHERN PAKISTAN",
     date: "Multiple Dates (Mar - Nov)",
     price: "RM 6,500 / pax",
     duration: "12 days 11 nights",
     groupSize: "15-18 people",
-    age: "25-65 years old",
-    soloTravelerTitle: "Solo Traveler",
-    soloTravelerDesc: "We find a roommate for you or pay the difference for a single person",
+    age: "25+ years old",
+    soloTravelerTitle: "Room Basis",
+    soloTravelerDesc: "Rooms are on Twin Sharing Basis. We find a roommate for you or pay the difference for a single room occupancy RM 1,500 (Optional).",
     privateGroupTitle: "Private Group",
     privateGroupDesc: "You can enjoy preferential prices for private groups, contact customer service to inquire about the tour leader's schedule"
   },
   hero: {
-    eyebrow: "12 DAYS TRIP TO NORTHERN PAKISTAN",
+    eyebrow: "12 DAYS ADVENTURE TRIP FROM MALAYSIA TO NORTHERN PAKISTAN",
     title: "Pakistan Discovery Tour",
     description: "An immersive journey through Northern Pakistan — from cultural capitals to high-altitude landscapes, where nature, history, and adventure meet."
   },
@@ -235,7 +248,7 @@ const CONTENT_EN: Content = {
     members: "Number of Members",
     ageAppropriate: "Age-Appropriate",
     weatherForecast: "Weather Forecast",
-    highlights: "Highlights",
+    highlights: "Trip Highlights",
     notices: "What you need to know when you come to North Pakistan",
     itinerary: "Itinerary",
     inclusions: "The tour fee includes:",
@@ -262,6 +275,12 @@ const CONTENT_EN: Content = {
     readMore: "Read More",
     emailUs: "Email Us",
     ourLocation: "Our Location",
+    contactHeroSubtitle: "We'd love to hear from you. Start your journey with us today.",
+    whatsappChatLabel: "Chat with our team",
+    preferredTripDateLabel: "Preferred Trip Date",
+    selectDatePlaceholder: "Select trip date",
+    totalPeopleLabel: "Total People",
+    peoplePlaceholder: "e.g. 4",
     sendMessage: "Send us a Message",
     name: "Name",
     phone: "Phone",
@@ -269,8 +288,6 @@ const CONTENT_EN: Content = {
     message: "Message",
     sendBtn: "Send Message",
     whatappUs: "WhatsApp Us",
-    tripAssistant: "Trip Assistant",
-    tripAssistantIntro: "Hello! I am your Northern Pakistan trip assistant. Ask me anything about the itinerary, weather, or inclusions! 🏔️",
     askAbout: "Ask about the trip...",
     somethingWrong: "Sorry, something went wrong.",
     recommends: "Recommends Nature Matters",
@@ -303,6 +320,19 @@ const CONTENT_EN: Content = {
     ],
     visionTitle: "✨ Our Vision",
     visionText: "\"To become a leading eco-conscious adventure travel brand in Asia, connecting travelers with nature in a responsible way — while empowering local communities and preserving the landscapes we love.\"",
+    achievementsTitle: "Our Achievements",
+    achievements: [
+      {
+        title: "Hosted Mr. Malaysia 2023/2024 - Kevin Murthy",
+        text: "We had the honour of hosting Mr. Malaysia 2023/2024 – Kevin Murthy, winner of AMR Malaysia, on our 12-day Northern Pakistan adventure expedition. Joining us as a solo traveller, Kevin brought remarkable humility, positive energy, and genuine curiosity for culture and landscapes.\n\nBeyond the stage, he proved to be an inspiring traveller and a wonderful ambassador of Malaysia. Hosting distinguished guests like Kevin reflects the trust international travellers place in Nature Matters to deliver safe, authentic, and memorable travel experiences across Northern Pakistan.",
+        images: [mrMalaysia1, mrMalaysia2, mrMalaysia3, mrMalaysia4]
+      },
+      {
+        title: "Featured in China Press",
+        text: "On 4 February 2026, Nature Matters Travel was proudly featured in China Press through a travel feature by Li Peihong, highlighting her journey across Northern Pakistan with our team. The coverage showcased the region’s natural beauty, cultural depth, and the quality of guided experiences we strive to deliver.\n\nThis international media recognition reflects the growing trust global travellers place in Nature Matters and strengthens our commitment to providing safe, authentic, and memorable travel experiences in Pakistan.",
+        images: [chinaPress1, chinaPress2, chinaPress3]
+      }
+    ],
     ctaTitle: "Ready to explore with us?",
     gallery: "Our Gallery"
   },
@@ -511,19 +541,19 @@ Answer user questions briefly and enthusiastically in Chinese (Simplified).
 const CONTENT_ZH: Content = {
   tripDetails: {
     title: "巴基斯坦探索之旅",
-    subtitle: "巴基斯坦北部12天深度游",
+    subtitle: "从马来西亚出发的巴基斯坦北部12天探险之旅",
     date: "多排期（3月 - 11月）",
     price: "RM 6,500 / 人",
     duration: "12天11晚",
     groupSize: "15-18人",
-    age: "25-65岁",
-    soloTravelerTitle: "独自旅行者",
-    soloTravelerDesc: "我们会为您安排室友，或者您可以补差价享受单人间。",
+    age: "25岁以上",
+    soloTravelerTitle: "住宿房型",
+    soloTravelerDesc: "房间以双人共享为基础。我们会为您安排室友，或您可补差价选择单人间 RM 1,500（可选）。",
     privateGroupTitle: "私人包团",
     privateGroupDesc: "私人包团可享受优惠价格，请联系客服查询领队档期。"
   },
   hero: {
-    eyebrow: "巴基斯坦北部12天之旅",
+    eyebrow: "从马来西亚出发的巴基斯坦北部12天探险之旅",
     title: "巴基斯坦探索之旅",
     description: "沉浸式探索巴基斯坦北部——从文化古都到高原风光，自然、历史与冒险的交汇之地。"
   },
@@ -541,7 +571,7 @@ const CONTENT_ZH: Content = {
     members: "成团人数",
     ageAppropriate: "适宜年龄",
     weatherForecast: "天气预报",
-    highlights: "行程亮点",
+    highlights: "行程精彩亮点",
     notices: "前往北巴基斯坦的注意事项",
     itinerary: "行程安排",
     inclusions: "团费包含：",
@@ -568,6 +598,12 @@ const CONTENT_ZH: Content = {
     readMore: "阅读更多",
     emailUs: "邮件咨询",
     ourLocation: "公司地址",
+    contactHeroSubtitle: "我们期待听到您的声音。今天就开始您的旅程。",
+    whatsappChatLabel: "与我们团队聊天",
+    preferredTripDateLabel: "出行日期",
+    selectDatePlaceholder: "请选择日期",
+    totalPeopleLabel: "总人数",
+    peoplePlaceholder: "例如：4",
     sendMessage: "发送消息",
     name: "姓名",
     phone: "电话",
@@ -575,8 +611,6 @@ const CONTENT_ZH: Content = {
     message: "留言内容",
     sendBtn: "发送消息",
     whatappUs: "WhatsApp 联系",
-    tripAssistant: "行程助手",
-    tripAssistantIntro: "您好！我是您的巴基斯坦北部行程助手。关于行程、天气或包含项目的问题都可以问我！🏔️",
     askAbout: "咨询行程相关问题...",
     somethingWrong: "抱歉，出错了。",
     recommends: "推荐 Nature Matters",
@@ -609,6 +643,19 @@ const CONTENT_ZH: Content = {
     ],
     visionTitle: "✨ 我们的愿景",
     visionText: "“成为亚洲领先的生态意识探险旅游品牌，以负责任的方式连接旅行者与自然——同时赋能当地社区并保护我们热爱的风景。”",
+    achievementsTitle: "我们的成就",
+    achievements: [
+      {
+        title: "接待 2023/2024 马来西亚先生 - Kevin Murthy",
+        text: "我们荣幸地接待了 2023/2024 马来西亚先生——AMR Malaysia 得主 Kevin Murthy，参与我们为期 12 天的巴基斯坦北部探险之旅。Kevin 以独行旅客身份加入，带来了谦逊、正能量以及对文化与风光的真诚好奇。\n\n在舞台之外，他是一位令人鼓舞的旅行者和优秀的马来西亚大使。接待像 Kevin 这样的贵宾，体现了国际旅客对 Nature Matters 在巴基斯坦北部提供安全、真实且难忘旅行体验的信任。",
+        images: [mrMalaysia1, mrMalaysia2, mrMalaysia3, mrMalaysia4]
+      },
+      {
+        title: "获中国报报道",
+        text: "2026 年 2 月 4 日，Nature Matters Travel 荣幸获中国报通过李佩红女士的旅行专题报道，讲述她与我们团队在巴基斯坦北部的旅程。报道展现了该地区的自然之美、文化底蕴，以及我们致力提供的优质导览体验。\n\n这一国际媒体认可反映了全球旅客对 Nature Matters 日益增长的信任，并坚定了我们在巴基斯坦提供安全、真实且难忘旅行体验的承诺。",
+        images: [chinaPress1, chinaPress2, chinaPress3]
+      }
+    ],
     ctaTitle: "准备好与我们一起探索了吗？",
     gallery: "精彩瞬间"
   },

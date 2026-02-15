@@ -20,14 +20,20 @@ import {
   Star,
   ShieldCheck,
   Award,
-  Globe
+  Globe,
+  BedDouble,
+  UserPlus
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DOWNLOAD_LINK, SOCIAL_LINKS, getContent, COMPANY_INFO, GALLERY_IMAGES } from '../constants';
 import { useLanguage } from '../contexts/LanguageContext';
 import ImageGallery from '../components/ImageGallery';
 import heroImage from '../assets/hero.jpg';
-import highlightsImage from '../assets/highlights.jpg';
+import exploringImage from '../assets/exploring.jpeg';
+import mrMalaysia1 from '../assets/mr_malaysia_1.jpeg';
+import mrMalaysia2 from '../assets/mr_malaysia_2.jpeg';
+import mrMalaysia3 from '../assets/mr_malaysia_3.jpeg';
+import mrMalaysia4 from '../assets/mr_malaysia_4.jpeg';
 
 const Home: React.FC = () => {
   const { language, setLanguage } = useLanguage();
@@ -37,6 +43,42 @@ const Home: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
+  const [highlightsSlideIndex, setHighlightsSlideIndex] = useState(0);
+  const [highlightsTouchStartX, setHighlightsTouchStartX] = useState<number | null>(null);
+  const [highlightsTouchEndX, setHighlightsTouchEndX] = useState<number | null>(null);
+
+  // Highlights slideshow: exploring first, then all gallery, then Mr Malaysia photos
+  const highlightsSlideshowImages = React.useMemo(
+    () => [exploringImage, ...GALLERY_IMAGES, mrMalaysia1, mrMalaysia2, mrMalaysia3, mrMalaysia4],
+    []
+  );
+
+  // Auto-advance highlights slideshow (all devices)
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setHighlightsSlideIndex((prev) => (prev + 1) % highlightsSlideshowImages.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [highlightsSlideshowImages.length]);
+
+  // Touch swipe for highlights slideshow (mobile/tablet horizontal)
+  const onHighlightsTouchStart = (e: React.TouchEvent) => {
+    setHighlightsTouchStartX(e.touches[0].clientX);
+    setHighlightsTouchEndX(null);
+  };
+  const onHighlightsTouchMove = (e: React.TouchEvent) => {
+    if (highlightsTouchStartX === null) return;
+    setHighlightsTouchEndX(e.touches[0].clientX);
+  };
+  const onHighlightsTouchEnd = () => {
+    if (highlightsTouchStartX === null || highlightsTouchEndX === null) return;
+    const diff = highlightsTouchStartX - highlightsTouchEndX;
+    const threshold = 40;
+    if (diff > threshold) setHighlightsSlideIndex((p) => (p + 1) % highlightsSlideshowImages.length);
+    else if (diff < -threshold) setHighlightsSlideIndex((p) => (p - 1 + highlightsSlideshowImages.length) % highlightsSlideshowImages.length);
+    setHighlightsTouchStartX(null);
+    setHighlightsTouchEndX(null);
+  };
 
   // Reset selected date when language changes (to update displayed text)
   React.useEffect(() => {
@@ -52,11 +94,11 @@ const Home: React.FC = () => {
 
   const BookNowSection = () => (
     <div className="flex flex-col items-center justify-start">
-       <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="bg-brand-red text-white px-8 py-3 rounded text-lg font-bold shadow-md hover:bg-red-600 transition transform hover:-translate-y-1 flex items-center gap-2 w-full justify-center md:w-auto font-sans">
+       <a href={bookingUrl} target="_blank" rel="noopener noreferrer" className="bg-brand-red text-white px-8 py-3 rounded text-base font-bold shadow-md hover:bg-red-600 transition transform hover:-translate-y-1 flex items-center gap-2 w-full justify-center md:w-auto font-sans">
          <CheckSquare size={20} />
          {content.ui.bookNow}
        </a>
-       <p className="mt-4 text-xs text-gray-500 text-center max-w-xs">
+       <p className="mt-4 text-caption text-gray-500 text-center max-w-xs font-sans">
          {content.ui.selectDate}
        </p>
     </div>
@@ -144,17 +186,11 @@ const Home: React.FC = () => {
 
       {/* Introduction */}
       <section className="py-16 px-4 max-w-5xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2 font-serif">{content.intro.title}</h2>
-        <div className="space-y-6 text-brand-red font-medium text-sm md:text-base max-w-4xl mx-auto leading-relaxed mt-6 font-sans">
-          <p className="text-gray-700">
-            {content.intro.text1}
-          </p>
-          <p className="text-xl font-bold font-serif text-brand-red">
-            {content.intro.highlight}
-          </p>
-          <p className="text-gray-700">
-            {content.intro.text2}
-          </p>
+        <h2 className="text-2xl font-bold uppercase tracking-wide text-gray-900 mb-2 font-serif">{content.intro.title}</h2>
+        <div className="space-y-6 text-base text-gray-700 max-w-4xl mx-auto leading-relaxed mt-6 font-sans">
+          <p>{content.intro.text1}</p>
+          <p className="text-xl font-bold font-serif text-brand-red">{content.intro.highlight}</p>
+          <p>{content.intro.text2}</p>
         </div>
         <div className="w-full h-px bg-gray-300 my-12"></div>
       </section>
@@ -162,121 +198,137 @@ const Home: React.FC = () => {
       {/* Trip Details Grid */}
       <section className="max-w-6xl mx-auto px-4 pb-16">
         <div className="flex flex-col items-center mb-10">
-          <h2 className="text-2xl font-bold uppercase tracking-wide flex items-center gap-2 font-serif">
-            <span className="w-8 h-px bg-black"></span>
+          <h2 className="text-2xl font-bold uppercase tracking-wide text-gray-900 flex items-center gap-2 font-serif">
+            <span className="w-8 h-px bg-gray-900"></span>
             {content.headers.tripDetails}
-            <span className="w-8 h-px bg-black"></span>
+            <span className="w-8 h-px bg-gray-900"></span>
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 space-y-6 text-sm md:text-base">
-            
-            {/* Confirmed Dates Section */}
+          <div className="md:col-span-2 space-y-5">
+            {/* Shared row style: icon box + content */}
             <div className="flex gap-4 items-start">
-              <Calendar className="text-gray-700 shrink-0 mt-1" size={20} />
-              <div className="w-full">
-                <span className="font-bold block text-gray-900 mb-2 font-serif">{content.headers.confirmedDepartures}</span>
+              <div className="shrink-0 w-11 h-11 rounded-xl bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                <Calendar size={22} strokeWidth={2} />
+              </div>
+              <div className="w-full min-w-0">
+                <span className="text-sm font-bold block text-gray-900 mb-2 font-serif">{content.headers.confirmedDepartures}</span>
                 <div className="relative">
-                  <select 
+                  <select
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full bg-blue-50 border border-blue-200 text-brand-blue text-sm rounded-lg focus:ring-brand-lightBlue focus:border-brand-lightBlue block p-3 pr-8 shadow-sm font-medium appearance-none cursor-pointer hover:bg-blue-100 transition"
+                    className="w-full bg-blue-50 border border-blue-200 text-brand-blue text-sm rounded-lg focus:ring-2 focus:ring-brand-lightBlue focus:border-brand-lightBlue block p-3 pr-9 shadow-sm font-medium appearance-none cursor-pointer hover:bg-blue-100 transition"
                   >
                     {content.departureDates.map((date, idx) => (
-                      <option key={idx} value={date}>
-                        {idx + 1}. {date}
-                      </option>
+                      <option key={idx} value={date}>→ {date}</option>
                     ))}
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-brand-blue">
-                    <ChevronDown size={16} />
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brand-blue">
+                    <ChevronDown size={18} />
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <DollarSign className="text-gray-700 shrink-0" size={20} />
-              <div>
-                <span className="font-bold block text-gray-900 font-serif">{content.headers.packageCost}</span>
-                <span className="text-brand-lightBlue font-medium">For Solo/Couples: {content.tripDetails.price}</span>
+            <div className="flex gap-4 items-start">
+              <div className="shrink-0 w-11 h-11 rounded-xl bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                <DollarSign size={22} strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <span className="text-sm font-bold block text-gray-900 font-serif">{content.headers.packageCost}</span>
+                <span className="text-sm text-brand-lightBlue font-medium">For Solo/Couples: {content.tripDetails.price}</span>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <Clock className="text-gray-700 shrink-0" size={20} />
-              <div>
-                <span className="font-bold block text-gray-900 font-serif">{content.headers.daysTraveled}</span>
-                <span className="text-brand-lightBlue font-medium">{content.tripDetails.duration}</span>
+            <div className="flex gap-4 items-start">
+              <div className="shrink-0 w-11 h-11 rounded-xl bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                <Clock size={22} strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <span className="text-sm font-bold block text-gray-900 font-serif">{content.headers.daysTraveled}</span>
+                <span className="text-sm text-brand-lightBlue font-medium">{content.tripDetails.duration}</span>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <Users className="text-gray-700 shrink-0" size={20} />
-              <div>
-                <span className="font-bold block text-gray-900 font-serif">{content.headers.members}</span>
-                <span className="text-brand-lightBlue font-medium">{content.tripDetails.groupSize}</span>
+            <div className="flex gap-4 items-start">
+              <div className="shrink-0 w-11 h-11 rounded-xl bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                <Users size={22} strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <span className="text-sm font-bold block text-gray-900 font-serif">{content.headers.members}</span>
+                <span className="text-sm text-brand-lightBlue font-medium">{content.tripDetails.groupSize}</span>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <User className="text-gray-700 shrink-0" size={20} />
-              <div>
-                <span className="font-bold block text-gray-900 font-serif">{content.headers.ageAppropriate}</span>
-                <span className="text-brand-lightBlue font-medium">{content.tripDetails.age}</span>
+            <div className="flex gap-4 items-start">
+              <div className="shrink-0 w-11 h-11 rounded-xl bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                <User size={22} strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <span className="text-sm font-bold block text-gray-900 font-serif">{content.headers.ageAppropriate}</span>
+                <span className="text-sm text-brand-lightBlue font-medium">{content.tripDetails.age}</span>
               </div>
             </div>
-             
-             <div className="flex gap-4">
-               <div className="shrink-0 w-5 flex justify-center"><span className="font-bold text-lg leading-none">👤</span></div>
-               <div>
-                  <span className="font-bold block text-gray-900 font-serif">{content.tripDetails.soloTravelerTitle}</span>
-                  <p className="text-brand-lightBlue text-xs md:text-sm">
-                    {content.tripDetails.soloTravelerDesc}
-                  </p>
-               </div>
-             </div>
 
-             <div className="flex gap-4">
-               <Users className="text-gray-700 shrink-0" size={20} />
-               <div>
-                 <span className="font-bold block text-gray-900 font-serif">{content.tripDetails.privateGroupTitle}</span>
-                 <span className="text-brand-lightBlue font-medium">{content.tripDetails.privateGroupDesc}</span>
-               </div>
-             </div>
+            <div className="flex gap-4 items-start">
+              <div className="shrink-0 w-11 h-11 rounded-xl bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                <BedDouble size={22} strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <span className="text-sm font-bold block text-gray-900 font-serif">{content.tripDetails.soloTravelerTitle}</span>
+                <p className="text-sm text-brand-lightBlue font-medium leading-snug mt-0.5">{content.tripDetails.soloTravelerDesc}</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start">
+              <div className="shrink-0 w-11 h-11 rounded-xl bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                <UserPlus size={22} strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <span className="text-sm font-bold block text-gray-900 font-serif">{content.tripDetails.privateGroupTitle}</span>
+                <span className="text-sm text-brand-lightBlue font-medium">{content.tripDetails.privateGroupDesc}</span>
+              </div>
+            </div>
 
              {/* Mobile Book Now Section */}
              <div className="md:hidden py-6 border-t border-b border-gray-100 my-4">
                 <BookNowSection />
              </div>
 
-             <div className="pt-4">
-               <div className="flex items-center gap-2 mb-4">
-                  <CloudSun className="text-gray-700 shrink-0" size={20} />
-                  <span className="font-bold text-gray-900 text-lg font-serif">{content.headers.weatherForecast}</span>
-               </div>
-               <div className="grid grid-cols-1 gap-6"> 
+            <div className="pt-2">
+              <div className="flex gap-4 items-start">
+                <div className="shrink-0 w-11 h-11 rounded-xl bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                  <CloudSun size={22} strokeWidth={2} />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-sm font-bold block text-gray-900 font-serif">{content.headers.weatherForecast}</span>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-6">
                  {content.weatherSeasons.map((season) => (
-                   <div key={season.title} className="bg-gray-50 border border-blue-100 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
-                     <h4 className="font-bold text-brand-blue mb-4 border-b border-blue-200 pb-2 flex items-center gap-2 font-serif">
-                       <CloudSun size={18} /> {season.title}
+                   <div key={season.title} className="bg-gray-50 border border-blue-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                     <h4 className="text-sm font-bold text-gray-900 mb-4 border-b border-gray-200 pb-2 flex items-center gap-3 font-serif">
+                       <span className="shrink-0 w-9 h-9 rounded-lg bg-brand-lightBlue/10 flex items-center justify-center text-brand-blue">
+                         <CloudSun size={18} strokeWidth={2} />
+                       </span>
+                       {season.title}
                      </h4>
                      <div className="space-y-4">
                        {season.data.map((loc) => (
                           <div key={loc.city} className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-1 sm:gap-4 text-sm">
-                             <div className="font-semibold text-gray-800 flex flex-col">
+                             <div className="font-semibold text-gray-900 flex flex-col font-sans">
                                <span className="text-base font-serif">{loc.city}</span>
                                <span className="text-brand-red text-sm font-bold">{loc.temp}</span>
                              </div>
-                             <div className="text-gray-600 text-sm leading-relaxed">{loc.desc}</div>
+                             <div className="text-gray-600 text-sm leading-relaxed font-sans">{loc.desc}</div>
                           </div>
                        ))}
                      </div>
                    </div>
                  ))}
                </div>
-               <p className="text-gray-500 text-xs mt-3 italic">{content.ui.weatherNote}</p>
+               <p className="text-caption text-gray-500 mt-3 italic font-sans">{content.ui.weatherNote}</p>
              </div>
           </div>
 
@@ -289,38 +341,89 @@ const Home: React.FC = () => {
         <div className="w-full h-px bg-gray-300 my-12"></div>
       </section>
 
-      {/* Highlights */}
-      <section className="max-w-6xl mx-auto px-4 pb-16">
-        <div className="flex flex-col md:flex-row gap-8 items-start">
-          <div className="w-full md:w-1/2">
-             <img 
-               src={highlightsImage}
-               alt="Attabad Lake, Gilgit, PAKISTAN" 
-               className="w-full h-auto object-cover rounded shadow-lg"
-             />
-             <p className="text-center text-xs text-gray-400 mt-2 tracking-widest uppercase font-sans">
-               ATTABAD LAKE, GILGIT, PAKISTAN
-             </p>
-          </div>
-          <div className="w-full md:w-1/2">
-            <h2 className="text-2xl font-bold uppercase tracking-wide flex items-center gap-2 mb-6 justify-end md:justify-start font-serif">
-              <span className="hidden md:block w-8 h-px bg-black"></span>
-              {content.headers.highlights}
-              <span className="md:hidden w-8 h-px bg-black"></span>
-            </h2>
-            <ul className="space-y-4">
-              {content.highlights.map((item) => (
-                <li key={item.id} className="flex gap-3 items-start">
-                  <div className="bg-brand-lightBlue text-white p-1 rounded-sm shrink-0 mt-1">
-                    <CheckSquare size={16} />
+      {/* Trip Highlights - one column image (slideshow on desktop), one column text */}
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-bold uppercase tracking-wide text-gray-900 flex justify-center items-center gap-2 font-serif">
+            <span className="w-8 h-px bg-gray-900 shrink-0"></span>
+            {content.headers.highlights}
+            <span className="w-8 h-px bg-gray-900 shrink-0"></span>
+          </h2>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+          {/* Image column: horizontal slideshow on mobile/tablet, vertical on desktop */}
+          <div className="w-full lg:w-1/2 min-w-0 flex flex-col">
+            {/* Mobile & tablet: horizontal slideshow with arrows, dots, and touch swipe */}
+            <div
+              className="lg:hidden relative w-full aspect-[4/3] md:aspect-[3/2] rounded-xl overflow-hidden shadow-lg bg-gray-100 touch-pan-y"
+              onTouchStart={onHighlightsTouchStart}
+              onTouchMove={onHighlightsTouchMove}
+              onTouchEnd={onHighlightsTouchEnd}
+            >
+              <div
+                className="absolute inset-0 flex transition-transform duration-500 ease-out"
+                style={{
+                  width: `${highlightsSlideshowImages.length * 100}%`,
+                  transform: `translateX(-${(highlightsSlideIndex / highlightsSlideshowImages.length) * 100}%)`,
+                }}
+              >
+                {highlightsSlideshowImages.map((src, idx) => (
+                  <div
+                    key={idx}
+                    className="relative shrink-0"
+                    style={{ width: `${100 / highlightsSlideshowImages.length}%` }}
+                  >
+                    <img
+                      src={src}
+                      alt={`Trip highlight ${idx + 1}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
                   </div>
-                  <span className="font-bold text-gray-800 text-sm md:text-base leading-snug font-sans">{item.text}</span>
+                ))}
+              </div>
+            </div>
+            {/* Desktop: vertical slideshow container */}
+            <div className="hidden lg:block relative w-full flex flex-col">
+              <div className="relative w-full rounded-xl overflow-hidden shadow-lg bg-gray-100 aspect-[3/4] max-h-[520px]">
+                <div
+                  className="absolute inset-0 flex flex-col transition-transform duration-500 ease-out"
+                  style={{
+                    height: `${highlightsSlideshowImages.length * 100}%`,
+                    transform: `translateY(-${(highlightsSlideIndex / highlightsSlideshowImages.length) * 100}%)`,
+                  }}
+                >
+                  {highlightsSlideshowImages.map((src, idx) => (
+                    <div
+                      key={idx}
+                      className="w-full shrink-0 relative"
+                      style={{ height: `${100 / highlightsSlideshowImages.length}%` }}
+                    >
+                      <img
+                        src={src}
+                        alt={`Trip highlight ${idx + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Text column - single column list; smaller on desktop to match slideshow height */}
+          <div className="w-full lg:w-1/2 min-w-0 flex flex-col">
+            <ul className="space-y-4 sm:space-y-5 lg:space-y-2">
+              {content.highlights.map((item) => (
+                <li key={item.id} className="flex gap-3 sm:gap-4 lg:gap-2 items-start">
+                  <div className="bg-brand-lightBlue text-white p-1.5 lg:p-1 rounded shrink-0 mt-0.5 lg:mt-0.5" aria-hidden>
+                    <CheckSquare size={16} className="text-white shrink-0 w-4 h-4 lg:w-3.5 lg:h-3.5" />
+                  </div>
+                  <span className="text-body-sm sm:text-base lg:text-sm text-gray-900 font-medium leading-snug font-sans">{item.text}</span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
-        <div className="w-full h-px bg-gray-300 my-12"></div>
+        <div className="w-full h-px bg-gray-300 my-12" aria-hidden></div>
       </section>
 
       {/* Downloads */}
@@ -330,7 +433,7 @@ const Home: React.FC = () => {
             <div className="bg-brand-lightBlue text-white p-4 rounded-full mb-2 shadow-lg group-hover:bg-blue-600 transition">
               <Download size={32} />
             </div>
-            <span className="text-brand-red font-bold border-b border-brand-red pb-0.5 group-hover:text-red-700 font-sans">{content.ui.downloadItinerary}</span>
+            <span className="text-sm text-brand-red font-bold border-b border-brand-red pb-0.5 group-hover:text-red-700 font-sans">{content.ui.downloadItinerary}</span>
           </a>
         </div>
         <div className="w-full h-px bg-gray-300 my-12"></div>
@@ -343,7 +446,7 @@ const Home: React.FC = () => {
              {content.headers.notices}
            </h2>
         </div>
-        <div className="text-xs md:text-sm text-brand-lightBlue space-y-3 leading-relaxed bg-blue-50 p-6 rounded-lg border border-blue-100 font-sans">
+        <div className="text-body-sm text-gray-700 space-y-3 leading-relaxed bg-blue-50 p-6 rounded-lg border border-blue-100 font-sans">
           {content.notices.map((notice, idx) => (
             <p key={idx} className="flex gap-2">
               <span className="font-bold min-w-[15px]">{idx + 1}.</span>
@@ -357,10 +460,10 @@ const Home: React.FC = () => {
       {/* Itinerary */}
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="text-center mb-10">
-           <h2 className="text-2xl font-bold uppercase tracking-wide flex justify-center items-center gap-2 font-serif">
-            <span className="w-6 h-px bg-black"></span>
+           <h2 className="text-2xl font-bold uppercase tracking-wide text-gray-900 flex justify-center items-center gap-2 font-serif">
+            <span className="w-6 h-px bg-gray-900"></span>
             {content.headers.itinerary} ({content.tripDetails.duration})
-            <span className="w-6 h-px bg-black"></span>
+            <span className="w-6 h-px bg-gray-900"></span>
            </h2>
         </div>
         
@@ -372,13 +475,13 @@ const Home: React.FC = () => {
                 className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition text-left"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-bold bg-gray-800 text-white px-2 py-1 rounded w-16 text-center font-sans">{item.day}</span>
-                  <span className="font-bold text-gray-800 font-serif">{item.title}</span>
+                  <span className="text-caption font-bold bg-gray-800 text-white px-2 py-1 rounded w-16 text-center font-sans">{item.day}</span>
+                  <span className="text-base font-bold text-gray-900 font-serif">{item.title}</span>
                 </div>
                 {openDay === item.day ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </button>
               {openDay === item.day && (
-                <div className="p-4 bg-white text-sm text-gray-600 border-t border-gray-100 animate-fadeIn font-sans">
+                <div className="p-4 bg-white text-body-sm text-gray-700 border-t border-gray-100 animate-fadeIn font-sans">
                   {item.description}
                 </div>
               )}
@@ -386,58 +489,58 @@ const Home: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-8 bg-red-100 p-3 rounded text-center text-xs text-red-800 font-sans">
+        <div className="mt-8 bg-red-100 p-3 rounded text-center text-body-sm text-red-800 font-sans">
            For a more comprehensive itinerary, accommodation, and meals, please download the complete itinerary PDF above!
         </div>
       </section>
 
-      {/* Inclusions & Exclusions */}
+      {/* Inclusions & Exclusions - identical containers with matching hover states */}
       <section className="max-w-6xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Inclusions */}
-          <div className="border-2 border-brand-blue/30 rounded-lg p-6 bg-white shadow-sm">
-            <h3 className="text-xl font-bold text-center mb-6 pb-2 border-b-2 border-brand-blue/20 font-serif">{content.headers.inclusions}</h3>
+          <div className="border-2 border-gray-200 rounded-lg p-6 bg-white shadow-sm transition-all duration-200 hover:border-brand-lightBlue/50 hover:shadow-md">
+            <h3 className="text-heading-card font-bold text-center mb-6 pb-2 border-b-2 border-gray-200 text-gray-900 font-serif">{content.headers.inclusions}</h3>
             <ul className="space-y-3">
               {content.inclusions.map((item, idx) => (
-                <li key={item.id} className="flex gap-2 text-sm text-brand-lightBlue font-sans">
-                  <span className="text-brand-lightBlue mt-0.5 font-bold">{idx + 1}.</span>
+                <li key={item.id} className="flex gap-2 text-body-sm text-gray-700 font-sans">
+                  <span className="text-brand-lightBlue mt-0.5 font-bold shrink-0">{idx + 1}.</span>
                   <span>{item.text}</span>
                 </li>
               ))}
             </ul>
             <div className="mt-6 flex justify-center">
-               <span className="inline-flex items-center gap-1 bg-white border border-yellow-400 text-gray-700 px-3 py-1 text-sm font-medium rounded-full shadow-sm font-sans">
-                 ⭐ The tour leader records the whole journey ⭐
-               </span>
+              <span className="inline-flex items-center gap-1 bg-white border border-yellow-400 text-gray-700 px-3 py-1 text-body-sm font-medium rounded-full shadow-sm font-sans">
+                ⭐ The tour leader records the whole journey ⭐
+              </span>
             </div>
           </div>
 
-          {/* Exclusions */}
-          <div className="border-2 border-gray-200 rounded-lg p-6 bg-gray-50/50">
-            <h3 className="text-xl font-bold text-center mb-6 pb-2 border-b-2 border-gray-200 font-serif">{content.headers.exclusions}</h3>
+          {/* Exclusions - same container styling and hover as Inclusions */}
+          <div className="border-2 border-gray-200 rounded-lg p-6 bg-white shadow-sm transition-all duration-200 hover:border-brand-lightBlue/50 hover:shadow-md">
+            <h3 className="text-heading-card font-bold text-center mb-6 pb-2 border-b-2 border-gray-200 text-gray-900 font-serif">{content.headers.exclusions}</h3>
             <ul className="space-y-3">
               {content.exclusions.map((item, idx) => (
-                <li key={item.id} className="flex gap-2 text-sm text-brand-lightBlue font-sans">
-                   <span className="text-brand-lightBlue mt-0.5 font-bold">{idx + 1}.</span>
-                   <span>{item.text}</span>
+                <li key={item.id} className="flex gap-2 text-body-sm text-gray-700 font-sans">
+                  <span className="text-brand-lightBlue mt-0.5 font-bold shrink-0">{idx + 1}.</span>
+                  <span>{item.text}</span>
                 </li>
               ))}
             </ul>
             <div className="mt-6 bg-yellow-50 p-3 rounded border border-yellow-200 flex gap-2 items-start">
-               <AlertTriangle size={16} className="text-yellow-600 shrink-0 mt-0.5" />
-               <p className="text-xs text-yellow-800 font-sans">
-                 <b>Note:</b> {content.ui.depositNote}
-               </p>
+              <AlertTriangle size={16} className="text-yellow-600 shrink-0 mt-0.5" aria-hidden />
+              <p className="text-body-sm text-yellow-800 font-sans">
+                <b>Note:</b> {content.ui.depositNote}
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 p-4 bg-brand-blue/10 rounded text-center text-xs md:text-sm font-medium text-gray-800 font-sans">
+        <div className="mt-8 p-4 bg-brand-blue/10 rounded text-center text-body-sm font-medium text-gray-700 font-sans">
            {content.ui.depositNote}
         </div>
 
         <div className="mt-8 flex justify-center">
-          <a href={DOWNLOAD_LINK} target="_blank" rel="noopener noreferrer" className="bg-brand-red text-white px-6 py-2 rounded shadow-md flex items-center gap-2 hover:bg-red-700 transition font-sans">
+          <a href={DOWNLOAD_LINK} target="_blank" rel="noopener noreferrer" className="bg-brand-red text-white px-6 py-2 rounded shadow-md text-body-sm font-bold flex items-center gap-2 hover:bg-red-700 transition font-sans">
             {content.ui.downloadItineraryBtn} <Download size={16} />
           </a>
         </div>
@@ -454,12 +557,12 @@ const Home: React.FC = () => {
       <section className="bg-gray-50 py-16 px-4">
         <div className="max-w-7xl mx-auto relative">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold uppercase tracking-wide flex justify-center items-center gap-2 font-serif">
-              <span className="w-8 h-px bg-black"></span>
+            <h2 className="text-2xl font-bold uppercase tracking-wide text-gray-900 flex justify-center items-center gap-2 font-serif">
+              <span className="w-8 h-px bg-gray-900"></span>
               {content.headers.testimonials}
-              <span className="w-8 h-px bg-black"></span>
+              <span className="w-8 h-px bg-gray-900"></span>
             </h2>
-            <p className="text-brand-blue mt-2 font-medium font-sans">Real stories from our unforgettable journeys</p>
+            <p className="text-body-sm text-gray-600 mt-2 font-sans">Real stories from our unforgettable journeys</p>
           </div>
 
           {/* Navigation Arrows */}
@@ -522,8 +625,8 @@ const Home: React.FC = () => {
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex justify-between items-start mb-3">
                        <div>
-                         <h4 className="font-bold text-gray-900 font-serif">{testimonial.name}</h4>
-                         <span className="text-xs text-gray-400 font-sans">{testimonial.date}</span>
+                         <h4 className="text-base font-bold text-gray-900 font-serif">{testimonial.name}</h4>
+                         <span className="text-caption text-gray-500 font-sans">{testimonial.date}</span>
                        </div>
                        <div className="flex text-yellow-400">
                          {[...Array(testimonial.rating)].map((_, i) => (
@@ -531,10 +634,10 @@ const Home: React.FC = () => {
                          ))}
                        </div>
                     </div>
-                    <p className="text-gray-600 text-sm italic leading-relaxed flex-1 font-sans">
+                    <p className="text-body-sm text-gray-700 italic leading-relaxed flex-1 font-sans">
                       "{testimonial.text}"
                     </p>
-                    <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-brand-red font-semibold uppercase flex items-center gap-1 font-sans">
+                    <div className="mt-4 pt-4 border-t border-gray-100 text-caption text-brand-red font-semibold uppercase flex items-center gap-1 font-sans">
                        <span className="w-2 h-2 bg-brand-red rounded-full"></span>
                        {content.ui.recommends}
                     </div>
@@ -564,8 +667,8 @@ const Home: React.FC = () => {
       <section className="bg-gradient-to-b from-white to-blue-50 py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">{content.headers.whyChooseUs}</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed font-sans">
+            <h2 className="text-2xl font-bold uppercase tracking-wide text-gray-900 font-serif mb-4">{content.headers.whyChooseUs}</h2>
+            <p className="text-body-sm text-gray-600 max-w-2xl mx-auto leading-relaxed font-sans">
               {content.about.storyText2}
             </p>
           </div>
@@ -576,8 +679,8 @@ const Home: React.FC = () => {
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-brand-blue mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300">
                       <User size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 font-serif">{content.whyChooseCards.expert.title}</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm font-sans">
+                  <h3 className="text-heading-card font-bold text-gray-900 mb-3 font-serif">{content.whyChooseCards.expert.title}</h3>
+                  <p className="text-body-sm text-gray-600 leading-relaxed font-sans">
                     {content.whyChooseCards.expert.desc}
                   </p>
               </div>
@@ -587,11 +690,11 @@ const Home: React.FC = () => {
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-brand-blue mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300">
                       <ShieldCheck size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 font-serif">{content.whyChooseCards.licensed.title}</h3>
-                  <p className="text-gray-600 leading-relaxed mb-4 text-sm font-sans">
+                  <h3 className="text-heading-card font-bold text-gray-900 mb-3 font-serif">{content.whyChooseCards.licensed.title}</h3>
+                  <p className="text-body-sm text-gray-600 leading-relaxed mb-4 font-sans">
                     {content.whyChooseCards.licensed.desc}
                   </p>
-                  <div className="text-xs bg-gray-50 px-3 py-2 rounded text-gray-500 font-mono border border-gray-200 font-sans">
+                  <div className="text-caption bg-gray-50 px-3 py-2 rounded text-gray-500 font-mono border border-gray-200 font-sans">
                       <div className="mb-1">{COMPANY_INFO.license}</div>
                       <div>{COMPANY_INFO.registration}</div>
                   </div>
@@ -602,8 +705,8 @@ const Home: React.FC = () => {
                   <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-brand-blue mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300">
                       <Award size={32} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 font-serif">{content.whyChooseCards.proven.title}</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm font-sans">
+                  <h3 className="text-heading-card font-bold text-gray-900 mb-3 font-serif">{content.whyChooseCards.proven.title}</h3>
+                  <p className="text-body-sm text-gray-600 leading-relaxed font-sans">
                     {content.whyChooseCards.proven.desc}
                   </p>
               </div>
@@ -614,13 +717,13 @@ const Home: React.FC = () => {
       {/* Contact Section */}
       <section id="contact" className="py-16 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold uppercase mb-8 flex justify-center items-center gap-2 font-serif">
-            <span className="w-8 h-px bg-black"></span>
+          <h2 className="text-2xl font-bold uppercase tracking-wide text-gray-900 mb-8 flex justify-center items-center gap-2 font-serif">
+            <span className="w-8 h-px bg-gray-900"></span>
             {content.headers.contact}
-            <span className="w-8 h-px bg-black"></span>
+            <span className="w-8 h-px bg-gray-900"></span>
           </h2>
           <div className="flex flex-col items-center gap-8">
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4 text-body-sm">
                <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="bg-[#1877F2] text-white px-6 py-2 rounded-full flex items-center gap-2 hover:bg-blue-700 transition shadow-sm font-sans">
                  <Facebook size={18} /> Facebook
                </a>
@@ -636,7 +739,7 @@ const Home: React.FC = () => {
                </a>
             </div>
 
-            <Link to="/contact" className="bg-brand-blue text-white px-10 py-4 rounded-full text-lg font-bold shadow-xl hover:bg-blue-900 transition transform hover:-translate-y-1 flex items-center gap-3 font-sans">
+            <Link to="/contact" className="bg-brand-blue text-white px-10 py-4 rounded-full text-base font-bold shadow-xl hover:bg-blue-900 transition transform hover:-translate-y-1 flex items-center gap-3 font-sans">
                <Mail size={22} /> {content.ui.viewContact}
             </Link>
           </div>

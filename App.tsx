@@ -14,7 +14,6 @@ import logo from './assets/nature-matters-logo.PNG';
 import Home from './pages/Home';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import ChatWidget from './components/ChatWidget';
 import { SOCIAL_LINKS, COMPANY_INFO, DOWNLOAD_LINK, getContent } from './constants';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
@@ -31,7 +30,7 @@ const Navigation: React.FC = () => {
 
   return (
   <>
-      <nav className="absolute top-0 left-0 w-full z-20 bg-white/95 text-gray-900 shadow-sm">
+      <nav className="absolute top-0 left-0 w-full z-20 bg-white/95 text-gray-900 shadow-sm font-sans">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           {/* Logo Representation */}
           <Link to="/" className="flex items-center gap-3 select-none hover:opacity-80 transition">
@@ -42,29 +41,29 @@ const Navigation: React.FC = () => {
              />
           </Link>
           
-          <div className="hidden md:flex space-x-6 text-sm uppercase font-medium tracking-wide font-sans">
+<div className="hidden md:flex space-x-6 text-body-sm uppercase font-medium tracking-wide">
             <Link 
               to="/" 
-              className={`transition hover:text-brand-red ${location.pathname === '/' ? 'text-brand-red' : 'text-gray-800'}`}
+              className={`transition hover:text-brand-red ${location.pathname === '/' ? 'text-brand-red' : 'text-gray-900'}`}
             >
-              {content.home}
+            {content.home}
             </Link>
             <Link 
               to="/about" 
-              className={`transition hover:text-brand-red ${location.pathname === '/about' ? 'text-brand-red' : 'text-gray-800'}`}
+              className={`transition hover:text-brand-red ${location.pathname === '/about' ? 'text-brand-red' : 'text-gray-900'}`}
             >
-              {content.about}
+            {content.about}
             </Link>
             <Link 
               to="/contact" 
-              className={`transition hover:text-brand-red ${location.pathname === '/contact' ? 'text-brand-red' : 'text-gray-800'}`}
+              className={`transition hover:text-brand-red ${location.pathname === '/contact' ? 'text-brand-red' : 'text-gray-900'}`}
             >
-              {content.contact}
+            {content.contact}
             </Link>
           </div>
 
           <button 
-            className="md:hidden text-gray-800" 
+            className="md:hidden text-gray-900" 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X /> : <Menu />}
@@ -73,7 +72,7 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200 absolute top-full w-full py-4 flex flex-col items-center space-y-4 text-gray-800 font-sans shadow-md">
+          <div className="md:hidden bg-white border-t border-gray-200 absolute top-full w-full py-4 flex flex-col items-center space-y-4 text-body-sm text-gray-900 font-sans shadow-md">
             <Link 
               to="/" 
               className={`hover:text-brand-red ${location.pathname === '/' ? 'text-brand-red' : ''}`}
@@ -121,8 +120,8 @@ const Footer: React.FC = () => {
               />
             </div>
           </Link>
-          <div className="text-sm leading-relaxed text-gray-400 space-y-1 font-sans">
-            <p className="font-semibold text-white text-lg mb-2 font-serif">{COMPANY_INFO.name}</p>
+          <div className="text-body-sm leading-relaxed text-gray-400 space-y-1 font-sans">
+            <p className="font-semibold text-white text-base mb-2 font-serif">{COMPANY_INFO.name}</p>
             <p>{COMPANY_INFO.license}</p>
             <p>{COMPANY_INFO.registration}</p>
             <p className="pt-2 flex items-start gap-2">
@@ -140,10 +139,10 @@ const Footer: React.FC = () => {
 
         {/* Column 2: Quick Links */}
         <div className="md:pl-10">
-          <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2 font-serif">
+          <h3 className="text-white font-bold text-base mb-6 flex items-center gap-2 font-serif">
             <span className="w-8 h-0.5 bg-brand-red"></span> {content.explore}
           </h3>
-          <ul className="space-y-4 text-sm font-medium font-sans">
+          <ul className="space-y-4 text-body-sm font-medium font-sans">
             <li><Link to="/" className="flex items-center gap-3 hover:text-brand-lightBlue transition group"><span className="w-1.5 h-1.5 bg-gray-600 rounded-full group-hover:bg-brand-lightBlue transition-colors"></span> {content.home}</Link></li>
             <li><Link to="/about" className="flex items-center gap-3 hover:text-brand-lightBlue transition group"><span className="w-1.5 h-1.5 bg-gray-600 rounded-full group-hover:bg-brand-lightBlue transition-colors"></span> {content.about}</Link></li>
             <li><Link to="/contact" className="flex items-center gap-3 hover:text-brand-lightBlue transition group"><span className="w-1.5 h-1.5 bg-gray-600 rounded-full group-hover:bg-brand-lightBlue transition-colors"></span> {content.contact}</Link></li>
@@ -152,10 +151,10 @@ const Footer: React.FC = () => {
 
         {/* Column 3: Resources */}
         <div>
-          <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2 font-serif">
+          <h3 className="text-white font-bold text-base mb-6 flex items-center gap-2 font-serif">
             <span className="w-8 h-0.5 bg-brand-red"></span> {content.resources}
           </h3>
-          <p className="text-sm text-gray-400 mb-6 leading-relaxed font-sans">
+          <p className="text-body-sm text-gray-400 mb-6 leading-relaxed font-sans">
             {language === 'en' 
               ? "Planning your trip? Download our detailed itinerary PDF to get all the daily schedules, accommodations, and packing lists offline."
               : "正在计划您的旅行？下载我们的详细行程单PDF，离线获取所有每日日程、住宿和打包清单。"}
@@ -164,7 +163,7 @@ const Footer: React.FC = () => {
             href={DOWNLOAD_LINK} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition shadow-lg hover:shadow-blue-900/30 hover:-translate-y-0.5 duration-200 w-full md:w-auto justify-center font-sans"
+            className="inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3 rounded-lg text-body-sm font-bold hover:bg-blue-700 transition shadow-lg hover:shadow-blue-900/30 hover:-translate-y-0.5 duration-200 w-full md:w-auto justify-center font-sans"
           >
             <Download size={20} /> {content.downloadItineraryBtn}
           </a>
@@ -172,7 +171,7 @@ const Footer: React.FC = () => {
 
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-800 text-center text-xs text-gray-500 font-sans">
+      <div className="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-gray-800 text-center text-caption text-gray-500 font-sans">
         <p>© {new Date().getFullYear()} Nature Matters Travel and Tours Sdn Bhd. {content.rights}</p>
       </div>
     </footer>
@@ -203,7 +202,17 @@ const MainApp: React.FC = () => {
         </main>
 
         <Footer />
-        <ChatWidget />
+
+        {/* Floating WhatsApp button */}
+        <a
+          href={SOCIAL_LINKS.whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat on WhatsApp"
+          className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2"
+        >
+          <Phone size={26} strokeWidth={2} />
+        </a>
       </div>
   );
 };
